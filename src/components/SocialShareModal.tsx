@@ -16,7 +16,7 @@ import { Share as RNShare } from 'react-native';
 import { SocialBannerModalProps, ShareContent, SocialPlatform } from '../types';
 import { DEFAULT_BANNER_TEMPLATES, SOCIAL_PLATFORMS } from '../constants/templates';
 import { ShareHelpers } from '../utils/shareHelpers';
-import ShareAnalytics from '../utils/analytics';
+import ShareAnalyticsService from '../utils/analytics';
 import BannerGenerator from './BannerGenerator';
 import ShareButtons from './ShareButtons';
 
@@ -36,7 +36,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
   const [layoutType, setLayoutType] = useState<'stats' | 'graph'>('stats');
   const [bannerUri, setBannerUri] = useState<string | null>(null);
   const [currentShareStep, setCurrentShareStep] = useState<'generate' | 'share'>('generate');
-  const analytics = ShareAnalytics.getInstance();
+  const analytics = ShareAnalyticsService.getInstance();
 
   // Calculate reading stats
   const readingStats = ShareHelpers.calculateReadingStats(books, readingSessions);
@@ -165,7 +165,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
               onPress={() => setSelectedTemplate(template)}
             >
               <LinearGradient
-                colors={template.colors}
+                colors={template.colors as [string, string, ...string[]]}
                 style={styles.templatePreview}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -363,7 +363,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
               disabled={isGenerating}
             >
               <LinearGradient
-                colors={selectedTemplate.colors}
+                colors={selectedTemplate.colors as [string, string, ...string[]]}
                 style={styles.actionButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
@@ -380,7 +380,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={styles.backButton}
+              style={[styles.backButton, darkMode && styles.darkBackButton]}
               onPress={() => setCurrentShareStep('generate')}
             >
               <FontAwesome name="arrow-left" size={20} color={darkMode ? "#fff" : "#333"} />
@@ -621,8 +621,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: darkMode ? '#444' : '#e0e0e0',
-    backgroundColor: darkMode ? '#1a1a1a' : '#fff',
+    borderColor: '#e0e0e0',
+    backgroundColor: '#fff',
+  },
+  darkBackButton: {
+    borderColor: '#444',
+    backgroundColor: '#1a1a1a',
   },
   backButtonText: {
     fontSize: 18,

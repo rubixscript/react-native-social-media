@@ -107,7 +107,7 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statTitle}>% Goal</Text>
-          <FontAwesome name="target" size={16} color="#4CAF50" />
+          <FontAwesome name="crosshairs" size={16} color="#4CAF50" />
           <Text style={styles.statValue}>{data.goalPercentage}%</Text>
         </View>
         <View style={styles.statItem}>
@@ -128,7 +128,7 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
     <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
       <View style={styles.cardContainer}>
         <LinearGradient
-          colors={template.colors}
+          colors={template.colors as [string, string, ...string[]]}
           style={[styles.card, layoutType === 'graph' && styles.dynamicHeight]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}

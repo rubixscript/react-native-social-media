@@ -5,7 +5,7 @@ export { default as ShareButtons } from './components/ShareButtons';
 
 // Utilities
 export { ShareHelpers } from './utils/shareHelpers';
-export { ShareAnalytics } from './utils/analytics';
+export { ShareAnalyticsService } from './utils/analytics';
 
 // Types
 export * from './types';

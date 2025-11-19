@@ -18,7 +18,7 @@ export class ShareHelpers {
     const platformConfig = SOCIAL_PLATFORMS[platform];
     if (!platformConfig || !platformConfig.shareUrl) return '';
 
-    let url = platformConfig.shareUrl;
+    let url: string = platformConfig.shareUrl;
 
     // Replace placeholders
     url = url.replace('{url}', encodeURIComponent(content.url || ''));
@@ -59,7 +59,7 @@ export class ShareHelpers {
         return true;
       } else {
         // React Native - use expo-clipboard
-        const ClipboardNative = await import('expo-clipboard');
+        const ClipboardNative = await import('expo-clipboard') as any;
         await ClipboardNative.setStringAsync(text);
         return true;
       }

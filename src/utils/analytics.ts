@@ -1,16 +1,16 @@
 import { ShareAnalytics } from '../types';
 
-export class ShareAnalytics {
-  private static instance: ShareAnalytics;
+export class ShareAnalyticsService {
+  private static instance: ShareAnalyticsService;
   private analytics: ShareAnalytics[] = [];
 
   private constructor() {}
 
-  public static getInstance(): ShareAnalytics {
-    if (!ShareAnalytics.instance) {
-      ShareAnalytics.instance = new ShareAnalytics();
+  public static getInstance(): ShareAnalyticsService {
+    if (!ShareAnalyticsService.instance) {
+      ShareAnalyticsService.instance = new ShareAnalyticsService();
     }
-    return ShareAnalytics.instance;
+    return ShareAnalyticsService.instance;
   }
 
   public trackShare(analytics: ShareAnalytics): void {
@@ -79,3 +79,6 @@ export class ShareAnalytics {
     }
   }
 }
+
+// Export as default for backward compatibility
+export default ShareAnalyticsService;
