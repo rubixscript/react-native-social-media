@@ -34,7 +34,7 @@ npm install expo expo-sharing expo-linear-gradient expo-blur react-native-view-s
 
 ```tsx
 import React, { useState } from 'react';
-import { SocialShareModal } from '@onepage/social-media-share';
+import { SocialShareModal } from '@rubixscript/react-native-social-banner';
 
 const App = () => {
   const [showShareModal, setShowShareModal] = useState(false);
@@ -103,7 +103,7 @@ You can also use individual components:
 #### ShareButtons
 
 ```tsx
-import { ShareButtons } from '@onepage/social-media-share';
+import { ShareButtons } from '@rubixscript/react-native-social-banner';
 
 <ShareButtons
   content={{
@@ -121,7 +121,7 @@ import { ShareButtons } from '@onepage/social-media-share';
 #### BannerGenerator
 
 ```tsx
-import { BannerGenerator } from '@onepage/social-media-share';
+import { BannerGenerator } from '@rubixscript/react-native-social-banner';
 
 <BannerGenerator
   data={readingStats}
@@ -207,7 +207,7 @@ const customTemplate = {
 Track sharing behavior:
 
 ```tsx
-import { ShareAnalytics } from '@onepage/social-media-share';
+import { ShareAnalytics } from '@rubixscript/react-native-social-banner';
 
 const analytics = ShareAnalytics.getInstance();
 
@@ -261,7 +261,7 @@ const data = await analytics.exportAnalytics();
 This library is written in TypeScript and provides full type definitions:
 
 ```tsx
-import { SocialPlatform, ShareContent, BannerTemplate } from '@onepage/social-media-share';
+import { SocialPlatform, ShareContent, BannerTemplate } from '@rubixscript/react-native-social-banner';
 
 const platforms: SocialPlatform[] = ['facebook', 'twitter', 'instagram'];
 ```
@@ -282,8 +282,8 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 For issues and questions:
 - Create an issue on GitHub
-- Email: support@onepageapp.com
+- Email: support@rubixscript.com
 
 ---
 
-Made with ❤️ by the OnePage Team
+Made with ❤️ by the RubixScript Team
