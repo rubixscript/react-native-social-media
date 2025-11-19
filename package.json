@@ -1,9 +1,11 @@
 {
-  "name": "@rubixreactnative/react-native-social-banner",
+  "name": "@rubixscript/react-native-social-banner",
   "version": "1.0.0",
+  "type": "module",
   "description": "A comprehensive React Native social media sharing library for generating and sharing beautiful content banners",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
@@ -19,35 +21,40 @@
     "expo",
     "react"
   ],
-  "author": "OnePage Team",
+  "author": "RubixScript Team",
   "license": "MIT",
+  "homepage": "https://www.rubixscript.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onepage/social-media-share.git"
+    "url": "https://github.com/rubixscript/react-native-social-banner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rubixscript/react-native-social-banner/issues"
   },
   "peerDependencies": {
+    "expo": ">=48.0.0",
     "react": ">=18.0.0",
-    "react-native": ">=0.70.0",
-    "expo": ">=48.0.0"
+    "react-native": ">=0.70.0"
   },
   "dependencies": {
-    "expo-sharing": "~14.0.7",
-    "expo-linear-gradient": "~15.0.7",
+    "@expo/vector-icons": "^15.0.2",
     "expo-blur": "~15.0.7",
-    "react-native-view-shot": "^4.0.3",
-    "@expo/vector-icons": "^15.0.2"
+    "expo-linear-gradient": "~15.0.7",
+    "expo-sharing": "~14.0.7",
+    "react-native-view-shot": "^4.0.3"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@testing-library/react-native": "^12.0.0",
     "@types/react": "~19.1.10",
     "@types/react-native": "^0.73.0",
-    "typescript": "~5.9.2",
-    "rollup": "^3.0.0",
-    "@rollup/plugin-typescript": "^11.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-commonjs": "^25.0.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
     "jest": "^29.0.0",
-    "@testing-library/react-native": "^12.0.0"
+    "rollup": "^3.0.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1",
+    "typescript": "~5.9.2"
   },
   "files": [
     "dist",
