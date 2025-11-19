@@ -1,7 +1,6 @@
 {
   "name": "@rubixscript/react-native-social-banner",
   "version": "1.0.0",
-  "type": "module",
   "description": "A comprehensive React Native social media sharing library for generating and sharing beautiful content banners",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
