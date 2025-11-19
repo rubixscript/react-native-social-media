@@ -233,7 +233,7 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
                   <View style={styles.appIconContainer}>
                     <Text style={styles.appIconText}>📚</Text>
                   </View>
-                  <Text style={styles.appName}>OnePageApp</Text>
+                  <Text style={styles.appName}>RubixScript</Text>
                 </View>
               </View>
             </View>

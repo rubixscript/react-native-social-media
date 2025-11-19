@@ -1,4 +1,4 @@
-# OnePage Social Media Share Library
+# RubixScript Social Media Share Library
 
 A comprehensive React Native library for creating and sharing beautiful social media banners showcasing reading progress, achievements, and book statistics.
 
@@ -15,9 +15,9 @@ A comprehensive React Native library for creating and sharing beautiful social m
 ## Installation
 
 ```bash
-npm install @onepage/social-media-share
+npm install @rubixscript/react-native-social-banner
 # or
-yarn add @onepage/social-media-share
+yarn add @rubixscript/react-native-social-banner
 ```
 
 ### Peer Dependencies
