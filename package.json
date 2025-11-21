@@ -1,7 +1,7 @@
 {
-  "name": "@rubixscript/react-native-social-banner",
-  "version": "1.0.1",
-  "description": "A comprehensive React Native social media sharing library for generating and sharing beautiful content banners",
+  "name": "@rubixscript/react-native-progress-banner",
+  "version": "2.0.0",
+  "description": "A comprehensive React Native library for generating and sharing beautiful progress tracking banners. Supports reading trackers, pomodoro timers, skill trackers, habit trackers, fitness apps, and custom progress types for social media sharing.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -10,13 +10,23 @@
     "dev": "rollup -c -w",
     "test": "jest",
     "lint": "eslint src --ext .ts,.tsx",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build"
   },
   "keywords": [
     "react-native",
     "social-media",
     "sharing",
     "banner",
+    "progress-tracker",
+    "reading-tracker",
+    "pomodoro-timer",
+    "habit-tracker",
+    "skill-tracker",
+    "fitness-tracker",
+    "goal-tracking",
+    "gamification",
     "expo",
     "react"
   ],
@@ -25,10 +35,10 @@
   "homepage": "https://www.rubixscript.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rubixscript/react-native-social-banner.git"
+    "url": "https://github.com/rubixscript/react-native-progress-banner.git"
   },
   "bugs": {
-    "url": "https://github.com/rubixscript/react-native-social-banner/issues"
+    "url": "https://github.com/rubixscript/react-native-progress-banner/issues"
   },
   "peerDependencies": {
     "expo": ">=48.0.0",

@@ -6,39 +6,102 @@ export interface ShareContent {
   tags?: string[];
 }
 
-export interface Book {
+// ============================================
+// GENERIC PROGRESS TRACKER TYPES
+// ============================================
+
+export type TrackerType = 'reading' | 'pomodoro' | 'skill' | 'habit' | 'fitness' | 'custom';
+
+export interface ProgressItem {
   id: string;
   title: string;
-  author: string;
+  subtitle?: string; // e.g., author for books, category for habits
   category: string;
-  totalPages: number;
-  currentPage: number;
+  progress: number; // Current progress value
+  total: number; // Total/goal value
   coverUri?: string;
   color: string;
-  startDate?: string;
+  startDate?: string | Date;
   completedDate?: string | Date | null;
   caption?: string;
+  metadata?: Record<string, any>; // For custom data
 }
 
-export interface ReadingSession {
+export interface ProgressSession {
   id: string;
-  bookId: string;
-  startPage: number;
-  endPage: number;
-  duration: number;
+  itemId: string; // ID of the ProgressItem
+  value: number; // Progress made in this session (e.g., pages read, minutes worked, reps completed)
+  duration: number; // Duration in minutes
   date: string | Date;
   notes?: string;
+  metadata?: Record<string, any>; // For custom data
 }
 
 export interface UserProfile {
   id: string;
   name: string;
   avatar?: string;
-  readerLevel: number;
+  level: number; // Generic level instead of readerLevel
   points: number;
+  title?: string; // e.g., "Master Reader", "Focus Ninja", "Habit Champion"
 }
 
-export interface ReadingStats {
+export interface ProgressStats {
+  // Current period stats
+  progressThisWeek: number;
+  progressThisMonth: number;
+  itemsCompletedThisMonth: number;
+  itemsCompletedThisMonthList: ProgressItem[];
+  itemsInProgressThisMonth: ProgressItem[];
+  topItemThisWeek: ProgressItem | null;
+
+  // All-time stats
+  totalItems: number;
+  totalProgressEver: number;
+  avgProgressPerDay: number;
+
+  // Goals and achievements
+  goalPercentage: number;
+  currentStreak: number;
+  totalPoints: number;
+
+  // Metadata for display
+  progressLabel: string; // e.g., "Pages", "Minutes", "Reps", "Days"
+  itemLabel: string; // e.g., "Books", "Sessions", "Skills", "Habits"
+}
+
+export interface GraphData {
+  days: Array<{
+    date: Date;
+    value: number; // Generic value instead of pages
+    intensity: number; // 0-4 scale
+    isToday: boolean;
+  }>;
+  totalDays: number;
+  activeDays: number;
+  totalValue: number; // Generic value instead of totalPages
+  maxValueInDay: number; // Generic value instead of maxPagesInDay
+  currentStreak: number;
+  valueLabel?: string; // e.g., "Pages", "Minutes", "Reps"
+}
+
+// ============================================
+// READING-SPECIFIC TYPES (Backward Compatible)
+// ============================================
+
+export interface Book extends ProgressItem {
+  author: string;
+  totalPages: number;
+  currentPage: number;
+}
+
+export interface ReadingSession extends ProgressSession {
+  bookId: string;
+  startPage: number;
+  endPage: number;
+}
+
+export interface ReadingStats extends ProgressStats {
   pagesThisWeek: number;
   pagesThisMonth: number;
   booksCompletedThisMonth: number;
@@ -48,23 +111,6 @@ export interface ReadingStats {
   totalBooks: number;
   totalPagesEver: number;
   avgPagesPerDay: number;
-  goalPercentage: number;
-  readingStreak: number;
-  totalPoints: number;
-}
-
-export interface GraphData {
-  days: Array<{
-    date: Date;
-    pages: number;
-    intensity: number; // 0-4 scale
-    isToday: boolean;
-  }>;
-  totalDays: number;
-  activeDays: number;
-  totalPages: number;
-  maxPagesInDay: number;
-  currentStreak: number;
 }
 
 export interface BannerTemplate {
@@ -76,14 +122,27 @@ export interface BannerTemplate {
   style: string;
 }
 
+// Generic modal props (supports any tracker type)
 export interface SocialBannerModalProps {
   visible: boolean;
   onClose: () => void;
   darkMode?: boolean;
-  books: Book[];
-  readingSessions: ReadingSession[];
+  trackerType?: TrackerType;
+
+  // Generic props
+  items?: ProgressItem[];
+  sessions?: ProgressSession[];
+
+  // Backward compatible: Reading-specific props
+  books?: Book[];
+  readingSessions?: ReadingSession[];
+
   profile?: UserProfile;
   onShareComplete?: (platform: string, success: boolean) => void;
+
+  // Customization
+  bannerTitle?: string; // e.g., "My Reading Progress", "Pomodoro Stats", "Habit Streak"
+  bannerFooter?: string; // Custom footer text (default: "Shared from [App Name]")
 }
 
 export interface ShareButtonsProps {
@@ -95,13 +154,17 @@ export interface ShareButtonsProps {
   onShare?: (platform: string) => void;
 }
 
+// Generic banner generator props (supports any tracker type)
 export interface BannerGeneratorProps {
-  data: ReadingStats;
+  trackerType?: TrackerType;
+  data: ProgressStats | ReadingStats; // Support both generic and reading-specific
   profile?: UserProfile;
   template?: BannerTemplate;
   layoutType?: 'stats' | 'graph';
   graphData?: GraphData;
   onBannerGenerated?: (imageUri: string) => void;
+  bannerTitle?: string;
+  bannerFooter?: string;
 }
 
 export type SocialPlatform =

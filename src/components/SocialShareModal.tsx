@@ -17,7 +17,7 @@ import { SocialBannerModalProps, ShareContent, SocialPlatform } from '../types';
 import { DEFAULT_BANNER_TEMPLATES, SOCIAL_PLATFORMS } from '../constants/templates';
 import { ShareHelpers } from '../utils/shareHelpers';
 import ShareAnalyticsService from '../utils/analytics';
-import BannerGenerator from './BannerGenerator';
+import BannerGenerator, { BannerGeneratorRef } from './BannerGenerator';
 import ShareButtons from './ShareButtons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -30,30 +30,79 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
   readingSessions,
   profile,
   onShareComplete,
+  trackerType = 'reading',
+  items,
+  sessions,
+  bannerTitle,
+  bannerFooter,
 }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(DEFAULT_BANNER_TEMPLATES[0]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [layoutType, setLayoutType] = useState<'stats' | 'graph'>('stats');
   const [bannerUri, setBannerUri] = useState<string | null>(null);
   const [currentShareStep, setCurrentShareStep] = useState<'generate' | 'share'>('generate');
+  const bannerGeneratorRef = useRef<BannerGeneratorRef>(null);
   const analytics = ShareAnalyticsService.getInstance();
 
-  // Calculate reading stats
-  const readingStats = ShareHelpers.calculateReadingStats(books, readingSessions);
-  const graphData = ShareHelpers.generateReadingGraphData(readingSessions);
+  // Determine which data to use (generic or reading-specific)
+  const useGeneric = items && sessions;
+  const useReading = books && readingSessions;
+
+  // Calculate stats based on data type
+  const progressStats = useGeneric && items && sessions
+    ? ShareHelpers.calculateProgressStats(items, sessions, trackerType)
+    : null;
+
+  const readingStats = useReading && books && readingSessions
+    ? ShareHelpers.calculateReadingStats(books, readingSessions)
+    : null;
+
+  // Use generic or reading-specific stats
+  const stats = progressStats || readingStats || {
+    progressThisWeek: 0,
+    progressThisMonth: 0,
+    itemsCompletedThisMonth: 0,
+    itemsCompletedThisMonthList: [],
+    itemsInProgressThisMonth: [],
+    topItemThisWeek: null,
+    totalItems: 0,
+    totalProgressEver: 0,
+    avgProgressPerDay: 0,
+    goalPercentage: 0,
+    currentStreak: 0,
+    totalPoints: 0,
+    progressLabel: 'Progress',
+    itemLabel: 'Items',
+  };
+
+  // Generate graph data
+  const graphData = useGeneric && sessions
+    ? ShareHelpers.generateProgressGraphData(sessions, trackerType)
+    : useReading && readingSessions
+    ? ShareHelpers.generateReadingGraphData(readingSessions)
+    : { days: [], totalDays: 0, activeDays: 0, totalValue: 0, maxValueInDay: 0, currentStreak: 0 };
 
   useEffect(() => {
     if (!visible) {
       // Reset state when modal closes
       setCurrentShareStep('generate');
       setBannerUri(null);
+      setSelectedTemplate(DEFAULT_BANNER_TEMPLATES[0]);
+      setLayoutType('stats');
     }
   }, [visible]);
 
   const handleGenerateBanner = async () => {
     setIsGenerating(true);
     try {
-      // The BannerGenerator will call onBannerGenerated
+      // Call the BannerGenerator's generateBanner method through ref
+      const uri = await bannerGeneratorRef.current?.generateBanner();
+
+      if (!uri) {
+        throw new Error('Failed to generate banner');
+      }
+
+      setBannerUri(uri);
       setCurrentShareStep('share');
     } catch (error) {
       console.error('Error generating banner:', error);
@@ -64,8 +113,12 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
   };
 
   const handleBannerGenerated = (uri: string) => {
-    setBannerUri(uri);
-    setCurrentShareStep('share');
+    // This is called by BannerGenerator after capture
+    if (uri) {
+      setBannerUri(uri);
+    } else {
+      console.error('BannerGenerator returned empty URI');
+    }
   };
 
   const handleShare = async (platform: string) => {
@@ -73,11 +126,17 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
       let success = false;
       let errorMessage = '';
 
+      // Dynamic share content based on tracker type
+      const progressValue = 'progressThisMonth' in stats ? stats.progressThisMonth : 0;
+      const itemsCompleted = 'itemsCompletedThisMonth' in stats ? stats.itemsCompletedThisMonth : 0;
+      const progressLabel = 'progressLabel' in stats ? stats.progressLabel : 'progress';
+      const itemLabel = 'itemLabel' in stats ? stats.itemLabel : 'items';
+
       const shareContent: ShareContent = {
-        title: `My Reading Progress - ${readingStats.pagesThisMonth} pages this month!`,
-        message: `I've read ${readingStats.pagesThisMonth} pages and ${readingStats.booksCompletedThisMonth} books this month! 📚✨`,
+        title: bannerTitle || `My ${trackerType.charAt(0).toUpperCase() + trackerType.slice(1)} Progress - ${progressValue} ${progressLabel.toLowerCase()} this month!`,
+        message: `I've completed ${progressValue} ${progressLabel.toLowerCase()} and ${itemsCompleted} ${itemLabel.toLowerCase()} this month! 🎉✨`,
         url: bannerUri || undefined,
-        tags: ['reading', 'books', 'onpageapp'],
+        tags: [trackerType, 'progress', 'goals'],
       };
 
       if (platform === 'copy-link') {
@@ -118,7 +177,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
       // Track analytics
       analytics.trackShare({
         platform,
-        contentType: 'reading_progress',
+        contentType: `${trackerType}_progress`,
         timestamp: new Date(),
         success,
         errorMessage,
@@ -136,7 +195,7 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
 
       analytics.trackShare({
         platform,
-        contentType: 'reading_progress',
+        contentType: `${trackerType}_progress`,
         timestamp: new Date(),
         success: false,
         errorMessage,
@@ -244,12 +303,16 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
       </View>
 
       <BannerGenerator
-        data={readingStats}
+        ref={bannerGeneratorRef}
+        data={stats}
         profile={profile}
         template={selectedTemplate}
         layoutType={layoutType}
         graphData={graphData}
         onBannerGenerated={handleBannerGenerated}
+        trackerType={trackerType}
+        bannerTitle={bannerTitle}
+        bannerFooter={bannerFooter}
       />
     </View>
   );
@@ -265,9 +328,9 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
 
       <ShareButtons
         content={{
-          title: `My Reading Progress - ${readingStats.pagesThisMonth} pages this month!`,
-          message: `I've read ${readingStats.pagesThisMonth} pages and ${readingStats.booksCompletedThisMonth} books this month! 📚✨`,
-          tags: ['reading', 'books', 'onpageapp'],
+          title: bannerTitle || `My ${trackerType.charAt(0).toUpperCase() + trackerType.slice(1)} Progress`,
+          message: `Check out my progress! 🎉`,
+          tags: [trackerType, 'progress', 'goals'],
         }}
         buttonStyle="primary"
         size="large"
@@ -312,39 +375,39 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
           {/* Stats Summary */}
           <View style={[styles.summarySection, darkMode && styles.darkSummarySection]}>
             <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>
-              Your Reading Stats
+              Your {trackerType.charAt(0).toUpperCase() + trackerType.slice(1)} Stats
             </Text>
             <View style={styles.summaryGrid}>
               <View style={styles.summaryItem}>
                 <Text style={[styles.summaryNumber, darkMode && styles.darkText]}>
-                  {readingStats.pagesThisMonth}
+                  {'progressThisMonth' in stats ? stats.progressThisMonth : 0}
                 </Text>
                 <Text style={[styles.summaryLabel, darkMode && styles.darkSecondaryText]}>
-                  Pages This Month
+                  {'progressLabel' in stats ? stats.progressLabel : 'Progress'} This Month
                 </Text>
               </View>
               <View style={styles.summaryItem}>
                 <Text style={[styles.summaryNumber, darkMode && styles.darkText]}>
-                  {readingStats.booksCompletedThisMonth}
+                  {'itemsCompletedThisMonth' in stats ? stats.itemsCompletedThisMonth : 0}
                 </Text>
                 <Text style={[styles.summaryLabel, darkMode && styles.darkSecondaryText]}>
-                  Books Completed
+                  {'itemLabel' in stats ? stats.itemLabel : 'Items'} Completed
                 </Text>
               </View>
               <View style={styles.summaryItem}>
                 <Text style={[styles.summaryNumber, darkMode && styles.darkText]}>
-                  {readingStats.totalBooks}
+                  {'totalItems' in stats ? stats.totalItems : 0}
                 </Text>
                 <Text style={[styles.summaryLabel, darkMode && styles.darkSecondaryText]}>
-                  Total Books
+                  Total {'itemLabel' in stats ? stats.itemLabel : 'Items'}
                 </Text>
               </View>
               <View style={styles.summaryItem}>
                 <Text style={[styles.summaryNumber, darkMode && styles.darkText]}>
-                  {readingStats.totalPagesEver}
+                  {'totalProgressEver' in stats ? stats.totalProgressEver : 0}
                 </Text>
                 <Text style={[styles.summaryLabel, darkMode && styles.darkSecondaryText]}>
-                  Total Pages
+                  Total {'progressLabel' in stats ? stats.progressLabel : 'Progress'}
                 </Text>
               </View>
             </View>

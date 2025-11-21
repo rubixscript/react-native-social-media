@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 import {
   View,
   Text,
@@ -19,28 +19,70 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const BANNER_WIDTH = SCREEN_WIDTH - 40;
 const BANNER_HEIGHT = 480;
 
-const BannerGenerator: React.FC<BannerGeneratorProps> = ({
+export interface BannerGeneratorRef {
+  generateBanner: () => Promise<string | null>;
+}
+
+const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(({
   data,
   profile,
   template = DEFAULT_BANNER_TEMPLATES[0],
   layoutType = 'stats',
   graphData,
   onBannerGenerated,
-}) => {
+  trackerType = 'reading',
+  bannerTitle,
+  bannerFooter,
+}, ref) => {
   const viewShotRef = useRef<ViewShot>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [lastGeneratedConfig, setLastGeneratedConfig] = useState<string>('');
 
   const generateBanner = async (): Promise<string | null> => {
     try {
       setIsGenerating(true);
+
+      // Wait a bit for the component to fully render with new props
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const uri = await viewShotRef.current?.capture?.();
-      onBannerGenerated?.(uri || '');
-      return uri || null;
+
+      if (!uri) {
+        throw new Error('Failed to capture banner image');
+      }
+
+      // Track the configuration that was used to generate this banner
+      const config = JSON.stringify({
+        templateId: template.id,
+        layoutType,
+        trackerType,
+      });
+      setLastGeneratedConfig(config);
+
+      onBannerGenerated?.(uri);
+      return uri;
     } catch (error) {
       console.error('Error generating banner:', error);
+      onBannerGenerated?.(''); // Notify with empty string on error
       return null;
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // Expose generateBanner method to parent via ref
+  useImperativeHandle(ref, () => ({
+    generateBanner,
+  }));
+
+  const getTrackerEmoji = () => {
+    switch (trackerType) {
+      case 'reading': return '📚';
+      case 'pomodoro': return '🍅';
+      case 'skill': return '💪';
+      case 'habit': return '✅';
+      case 'fitness': return '🏋️';
+      default: return '⭐';
     }
   };
 
@@ -48,7 +90,7 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
     if (layoutType === 'graph' && graphData) {
       return (
         <View style={styles.graphSection}>
-          {/* Reading Graph */}
+          {/* Activity Graph */}
           <View style={styles.graphContainer}>
             <View style={styles.graphGrid}>
               {Array.from({ length: 5 }, (_, rowIndex) => (
@@ -97,13 +139,19 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
       );
     }
 
-    // Default stats layout
+    // Default stats layout - now generic
+    const progressLabel = 'progressLabel' in data ? (data as any).progressLabel : 'Progress';
+    const itemLabel = 'itemLabel' in data ? (data as any).itemLabel : 'Items';
+    const progressValue = 'progressThisMonth' in data ? (data as any).progressThisMonth : ('pagesThisMonth' in data ? (data as any).pagesThisMonth : 0);
+    const itemsCompleted = 'itemsCompletedThisMonth' in data ? (data as any).itemsCompletedThisMonth : ('booksCompletedThisMonth' in data ? (data as any).booksCompletedThisMonth : 0);
+    const streak = 'currentStreak' in data ? (data as any).currentStreak : ('readingStreak' in data ? (data as any).readingStreak : 0);
+
     return (
       <View style={styles.stats}>
         <View style={styles.statItem}>
-          <Text style={styles.statTitle}>Total Pages</Text>
-          <FontAwesome name="file-text" size={16} color="#FF9800" />
-          <Text style={styles.statValue}>{data.pagesThisMonth}</Text>
+          <Text style={styles.statTitle}>{progressLabel}</Text>
+          <FontAwesome name="bar-chart" size={16} color="#FF9800" />
+          <Text style={styles.statValue}>{progressValue}</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statTitle}>% Goal</Text>
@@ -111,14 +159,14 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
           <Text style={styles.statValue}>{data.goalPercentage}%</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statTitle}>Books Read</Text>
-          <FontAwesome name="book" size={16} color="#2196F3" />
-          <Text style={styles.statValue}>{data.booksCompletedThisMonth}</Text>
+          <Text style={styles.statTitle}>{itemLabel}</Text>
+          <FontAwesome name="check-circle" size={16} color="#2196F3" />
+          <Text style={styles.statValue}>{itemsCompleted}</Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statTitle}>Streak</Text>
           <FontAwesome name="fire" size={16} color="#F44336" />
-          <Text style={styles.statValue}>{data.readingStreak}</Text>
+          <Text style={styles.statValue}>{streak}</Text>
         </View>
       </View>
     );
@@ -139,7 +187,7 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
               <View style={styles.userCard}>
                 <View style={styles.level}>
                   <Text style={styles.levelText}>
-                    Level {profile ? ShareHelpers.getReaderLevelName(profile.readerLevel) : 'Novice'}
+                    Level {profile ? ShareHelpers.getLevelName(profile.level, trackerType) : 'Novice'}
                   </Text>
                 </View>
                 <View style={styles.points}>
@@ -180,14 +228,14 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
 
               <View style={styles.moreInfo}>
                 <Text style={styles.userName}>
-                  {profile?.name || 'Reader'}
+                  {profile?.name || (profile?.title || 'User')}
                 </Text>
 
-                {/* Books section */}
+                {/* Items section (Books, Tasks, Skills, etc.) */}
                 <View style={styles.booksSection}>
                   <View style={styles.booksSectionHeader}>
                     <Text style={styles.booksSectionTitle}>
-                      Books Reading This Month
+                      {bannerTitle || `${('itemLabel' in data ? data.itemLabel : 'Items')} This Month`}
                     </Text>
                     {layoutType === 'graph' && graphData && (
                       <View style={styles.daysBadge}>
@@ -198,31 +246,59 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
                     )}
                   </View>
 
-                  {data.booksReadThisMonth && data.booksReadThisMonth.length > 0 ? (
-                    data.booksReadThisMonth.slice(0, 3).map((book, index) => (
-                      <View key={book.id} style={styles.bookItem}>
-                        <Text style={styles.bookEmoji}>📖</Text>
-                        <View style={styles.bookInfo}>
-                          <Text style={styles.bookTitle} numberOfLines={1}>
-                            {book.title}
-                          </Text>
+                  {(() => {
+                    // Get items list (supports both generic and reading-specific)
+                    const itemsList = 'itemsInProgressThisMonth' in data
+                      ? (data as any).itemsInProgressThisMonth
+                      : ('booksReadThisMonth' in data ? (data as any).booksReadThisMonth : []);
+
+                    if (itemsList && itemsList.length > 0) {
+                      return itemsList.slice(0, 3).map((item: any, index: number) => {
+                        const itemProgress = 'progress' in item ? item.progress : ('currentPage' in item ? item.currentPage : 0);
+                        const itemTotal = 'total' in item ? item.total : ('totalPages' in item ? item.totalPages : 100);
+                        const progressLabel = 'progressLabel' in data ? (data as any).progressLabel : 'Progress';
+
+                        return (
+                          <View key={item.id} style={styles.bookItem}>
+                            <Text style={styles.bookEmoji}>{getTrackerEmoji()}</Text>
+                            <View style={styles.bookInfo}>
+                              <Text style={styles.bookTitle} numberOfLines={1}>
+                                {item.title}
+                              </Text>
+                            </View>
+                            <Text style={styles.bookPages}>
+                              {Math.min(itemProgress, itemTotal)}/{itemTotal}
+                            </Text>
+                          </View>
+                        );
+                      });
+                    } else {
+                      const itemLabel = 'itemLabel' in data ? (data as any).itemLabel.toLowerCase() : 'items';
+                      return (
+                        <View style={styles.bookItem}>
+                          <Text style={styles.bookEmoji}>{getTrackerEmoji()}</Text>
+                          <View style={styles.bookInfo}>
+                            <Text style={styles.bookTitle}>No {itemLabel} this month</Text>
+                          </View>
                         </View>
-                        <Text style={styles.bookPages}>{Math.min(book.currentPage, book.totalPages)}p read</Text>
-                      </View>
-                    ))
-                  ) : (
-                    <View style={styles.bookItem}>
-                      <Text style={styles.bookEmoji}>📕</Text>
-                      <View style={styles.bookInfo}>
-                        <Text style={styles.bookTitle}>No books this month</Text>
-                      </View>
-                    </View>
-                  )}
-                  {data.booksReadThisMonth && data.booksReadThisMonth.length > 3 && (
-                    <Text style={styles.moreBooks}>
-                      +{data.booksReadThisMonth.length - 3} more
-                    </Text>
-                  )}
+                      );
+                    }
+                  })()}
+
+                  {(() => {
+                    const itemsList = 'itemsInProgressThisMonth' in data
+                      ? (data as any).itemsInProgressThisMonth
+                      : ('booksReadThisMonth' in data ? (data as any).booksReadThisMonth : []);
+
+                    if (itemsList && itemsList.length > 3) {
+                      return (
+                        <Text style={styles.moreBooks}>
+                          +{itemsList.length - 3} more
+                        </Text>
+                      );
+                    }
+                    return null;
+                  })()}
                 </View>
 
                 {/* Conditional Stats/Graph Section */}
@@ -231,9 +307,9 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
                 {/* App branding at bottom */}
                 <View style={styles.appBranding}>
                   <View style={styles.appIconContainer}>
-                    <Text style={styles.appIconText}>📚</Text>
+                    <Text style={styles.appIconText}>{getTrackerEmoji()}</Text>
                   </View>
-                  <Text style={styles.appName}>RubixScript</Text>
+                  <Text style={styles.appName}>{bannerFooter || 'RubixScript'}</Text>
                 </View>
               </View>
             </View>
@@ -248,7 +324,9 @@ const BannerGenerator: React.FC<BannerGeneratorProps> = ({
       {renderBanner()}
     </View>
   );
-};
+});
+
+BannerGenerator.displayName = 'BannerGenerator';
 
 const styles = StyleSheet.create({
   container: {
