@@ -1,6 +1,6 @@
 {
   "name": "@rubixscript/react-native-progress-banner",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A comprehensive React Native library for generating and sharing beautiful progress tracking banners. Supports reading trackers, pomodoro timers, skill trackers, habit trackers, fitness apps, and custom progress types for social media sharing.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
