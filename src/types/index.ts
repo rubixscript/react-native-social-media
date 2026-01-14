@@ -6,6 +6,35 @@ export interface ShareContent {
   tags?: string[];
 }
 
+// Text labels for the SocialShareModal - allows full customization of all text
+export interface SocialShareModalLabels {
+  // Header
+  headerTitle?: string;
+
+  // Section titles
+  templateSectionTitle?: string;
+  previewSectionTitle?: string;
+  shareSectionTitle?: string;
+  statsSectionTitle?: string;
+
+  // Share section
+  shareDescription?: string;
+
+  // Buttons
+  generateBannerText?: string;
+  generatingText?: string;
+  backToTemplatesText?: string;
+
+  // Success messages
+  copyLinkSuccessMessage?: string;
+  shareSuccessMessage?: string;
+  shareErrorMessage?: string;
+
+  // Stats labels
+  progressLabel?: string;
+  itemLabel?: string;
+}
+
 // ============================================
 // GENERIC PROGRESS TRACKER TYPES
 // ============================================
@@ -143,6 +172,9 @@ export interface SocialBannerModalProps {
   // Customization
   bannerTitle?: string; // e.g., "My Reading Progress", "Pomodoro Stats", "Habit Streak"
   bannerFooter?: string; // Custom footer text (default: "Shared from [App Name]")
+
+  // Text labels customization - allows full control over all displayed text
+  textLabels?: SocialShareModalLabels;
 }
 
 export interface ShareButtonsProps {

@@ -1,3 +1,3 @@
 # TODO
-- [ ] thi library should not be just for reading progress should be for any socila media banner sharing for showing progress for example pomodo tracker , skill tracker , habit tracker app etc .. also it has issue when i click generate banner , and chnaging template
-- [ ] give different options for banner generation in example code
+- [ ] Modularize the entire app. Make sure all components are separate and meaningful. Do not over factor refactor the app. Make sure it's logical sub components.
+- [ ] Can you remove all hardcoded text like reading progress in the main app and make sure everything  is through props and given inputs.
