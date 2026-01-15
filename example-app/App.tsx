@@ -56,7 +56,6 @@ const sampleSessions: ProgressSession[] = [
 const sampleProfile = {
   id: 'user-1',
   name: 'John Doe',
-  avatar: 'https://i.pravatar.cc/150?img=12',
   level: 5,
   points: 1250,
   title: 'Fitness Enthusiast',

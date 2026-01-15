@@ -16,142 +16,56 @@ export const Avatar: React.FC<AvatarProps> = ({ profile }) => {
     );
   }
 
-  // Otherwise, use procedural SVG-style avatar with gender selection
+  // Otherwise, use procedural avatar with gender selection
   const gender = (profile as any)?.gender || 'guy';
 
   return (
     <View style={styles.avatarContainer}>
       <View style={styles.avatarBackground}>
-        <View style={styles.avatarBody}>
-          {/* SVG-style Guy Avatar */}
-          {gender === 'guy' && <GuyAvatar />}
+        <View style={styles.headContainer}>
+          {/* Hair - different styles for guy/girl */}
+          {gender === 'girl' ? (
+            <>
+              <View style={[styles.hair, styles.girlHair, { backgroundColor: '#4a3728' }]} />
+              <View style={[styles.hairSide, { backgroundColor: '#4a3728' }]} />
+            </>
+          ) : (
+            <View style={[styles.hair, { backgroundColor: '#2f1b0d' }]} />
+          )}
 
-          {/* SVG-style Girl Avatar */}
-          {gender === 'girl' && <GirlAvatar />}
+          {/* Face */}
+          <View style={[styles.face, { backgroundColor: '#eab38f' }]}>
+            {/* Eyes */}
+            <View style={styles.eyesContainer}>
+              <View style={[styles.eye, { backgroundColor: '#1f1f1f' }]} />
+              <View style={[styles.eye, { backgroundColor: '#1f1f1f' }]} />
+            </View>
+
+            {/* Nose */}
+            <View style={styles.nose} />
+
+            {/* Mouth */}
+            <View style={[styles.mouth, { backgroundColor: '#d73e3e' }]} />
+          </View>
+
+          {/* Shirt */}
+          <View style={[styles.shirt, { backgroundColor: gender === 'girl' ? '#ff6b9d' : '#8665c2' }]}>
+            <View style={styles.collar} />
+            {gender === 'girl' ? (
+              <View style={styles.necklace}>
+                <View style={[styles.pendant, { backgroundColor: '#ffd700' }]} />
+              </View>
+            ) : (
+              <View style={styles.buttons}>
+                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
+                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
+                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
+              </View>
+            )}
+          </View>
         </View>
       </View>
     </View>
-  );
-};
-
-// Guy Avatar Component
-const GuyAvatar: React.FC = () => {
-  return (
-    <>
-      {/* Background circle */}
-      <View style={[styles.avatarBg, { backgroundColor: '#e8f4f8' }]} />
-
-      {/* Body */}
-      <View style={[styles.body, { backgroundColor: '#6366f1' }]}>
-        <View style={styles.neck} />
-      </View>
-
-      {/* Head */}
-      <View style={[styles.head, { backgroundColor: '#fcd5b8' }]}>
-        {/* Hair */}
-        <View style={styles.guyHairContainer}>
-          <View style={[styles.guyHairMain, { backgroundColor: '#2d1b0e' }]} />
-          <View style={[styles.guyHairSideLeft, { backgroundColor: '#2d1b0e' }]} />
-          <View style={[styles.guyHairSideRight, { backgroundColor: '#2d1b0e' }]} />
-        </View>
-
-        {/* Face features */}
-        <View style={styles.faceFeatures}>
-          {/* Eyebrows */}
-          <View style={[styles.eyebrow, styles.eyebrowLeft]} />
-          <View style={[styles.eyebrow, styles.eyebrowRight]} />
-
-          {/* Eyes */}
-          <View style={[styles.eye, styles.eyeLeft]}>
-            <View style={styles.pupil} />
-          </View>
-          <View style={[styles.eye, styles.eyeRight]}>
-            <View style={styles.pupil} />
-          </View>
-
-          {/* Nose */}
-          <View style={styles.nose} />
-
-          {/* Mouth - slight smile */}
-          <View style={[styles.mouth, styles.guyMouth]} />
-        </View>
-
-        {/* Ears */}
-        <View style={[styles.ear, styles.earLeft, { backgroundColor: '#fcd5b8' }]} />
-        <View style={[styles.ear, styles.earRight, { backgroundColor: '#fcd5b8' }]} />
-      </View>
-    </>
-  );
-};
-
-// Girl Avatar Component
-const GirlAvatar: React.FC = () => {
-  return (
-    <>
-      {/* Background circle */}
-      <View style={[styles.avatarBg, { backgroundColor: '#fef3c7' }]} />
-
-      {/* Body */}
-      <View style={[styles.body, { backgroundColor: '#ec4899' }]}>
-        <View style={styles.neck} />
-        {/* Hair strands on body */}
-        <View style={[styles.hairStrandBodyLeft, { backgroundColor: '#4a3728' }]} />
-        <View style={[styles.hairStrandBodyRight, { backgroundColor: '#4a3728' }]} />
-      </View>
-
-      {/* Head */}
-      <View style={[styles.head, { backgroundColor: '#fcd5b8' }]}>
-        {/* Hair */}
-        <View style={styles.girlHairContainer}>
-          {/* Main hair */}
-          <View style={[styles.girlHairMain, { backgroundColor: '#4a3728' }]} />
-          {/* Bangs */}
-          <View style={[styles.girlBangs, { backgroundColor: '#4a3728' }]} />
-          {/* Side hair */}
-          <View style={[styles.girlHairSideLeft, { backgroundColor: '#4a3728' }]} />
-          <View style={[styles.girlHairSideRight, { backgroundColor: '#4a3728' }]} />
-          {/* Hair bun/ponytail */}
-          <View style={[styles.girlHairBun, { backgroundColor: '#4a3728' }]} />
-        </View>
-
-        {/* Face features */}
-        <View style={styles.faceFeatures}>
-          {/* Eyelashes */}
-          <View style={[styles.eyelash, styles.eyelashLeft]} />
-          <View style={[styles.eyelash, styles.eyelashRight]} />
-
-          {/* Eyes - slightly larger */}
-          <View style={[styles.eye, styles.eyeLeft, styles.girlEye]}>
-            <View style={styles.pupil} />
-            <View style={styles.eyeShine} />
-          </View>
-          <View style={[styles.eye, styles.eyeRight, styles.girlEye]}>
-            <View style={styles.pupil} />
-            <View style={styles.eyeShine} />
-          </View>
-
-          {/* Blush */}
-          <View style={[styles.blush, styles.blushLeft]} />
-          <View style={[styles.blush, styles.blushRight]} />
-
-          {/* Small nose */}
-          <View style={[styles.nose, styles.girlNose]} />
-
-          {/* Mouth - with lips */}
-          <View style={[styles.mouth, styles.girlMouth]}>
-            <View style={styles.lips} />
-          </View>
-        </View>
-
-        {/* Ears */}
-        <View style={[styles.ear, styles.earLeft, { backgroundColor: '#fcd5b8' }]} />
-        <View style={[styles.ear, styles.earRight, { backgroundColor: '#fcd5b8' }]} />
-
-        {/* Earring */}
-        <View style={[styles.earring, styles.earringLeft]} />
-        <View style={[styles.earring, styles.earringRight]} />
-      </View>
-    </>
   );
 };
 
