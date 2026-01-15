@@ -67,6 +67,41 @@ const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(
       generateBanner,
     }));
 
+    // Get template-specific styles for modern minimal dark themes
+    const getTemplateStyle = () => {
+      switch (template.style) {
+        case 'obsidian':
+          return {
+            borderWidth: 1,
+            borderColor: 'rgba(34, 211, 238, 0.2)',
+            shadowColor: '#22d3ee',
+            accentColor: '#22d3ee',
+            showTopAccent: true,
+          };
+        case 'carbon':
+          return {
+            borderWidth: 1,
+            borderColor: 'rgba(16, 185, 129, 0.15)',
+            shadowColor: '#10b981',
+            accentColor: '#10b981',
+            showTopAccent: false,
+            showGlow: true,
+          };
+        case 'midnight':
+        default:
+          return {
+            borderWidth: 1,
+            borderColor: 'rgba(168, 85, 247, 0.15)',
+            shadowColor: '#a855f7',
+            accentColor: '#a855f7',
+            showTopAccent: false,
+            showGlow: false,
+          };
+      }
+    };
+
+    const templateStyle = getTemplateStyle();
+
     return (
       <View style={styles.container}>
         <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.95 }}>
@@ -76,52 +111,56 @@ const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(
               style={[
                 styles.card,
                 layoutType === 'graph' && styles.dynamicHeight,
+                { borderColor: templateStyle.borderColor },
               ]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <View style={styles.additional}>
-                <BlurView
-                  intensity={80}
-                  tint="dark"
-                  style={styles.glassBackground}
+              {/* Top accent bar for obsidian template */}
+              {templateStyle.showTopAccent && (
+                <View style={[styles.topAccent, { backgroundColor: templateStyle.accentColor }]} />
+              )}
+
+              {/* Subtle glow effect for carbon template */}
+              {templateStyle.showGlow && (
+                <View style={[styles.glowEffect, { backgroundColor: templateStyle.accentColor }]} />
+              )}
+
+              <View style={styles.content}>
+                {/* User Card with Avatar */}
+                <UserCard
+                  profile={profile}
+                  totalPoints={data.totalPoints}
+                  trackerType={trackerType}
                 />
-                <View style={styles.glassContent}>
-                  {/* User Card with Avatar */}
-                  <UserCard
-                    profile={profile}
-                    totalPoints={data.totalPoints}
+
+                {/* User Info Section */}
+                <View style={styles.moreInfo}>
+                  <Text style={[styles.userName, { color: templateStyle.accentColor }]}>
+                    {profile?.name || profile?.title || 'User'}
+                  </Text>
+
+                  {/* Items List */}
+                  <ItemsList
+                    data={data}
                     trackerType={trackerType}
+                    bannerTitle={bannerTitle}
+                    layoutType={layoutType}
+                    graphData={graphData}
                   />
 
-                  {/* User Info Section */}
-                  <View style={styles.moreInfo}>
-                    <Text style={styles.userName}>
-                      {profile?.name || profile?.title || 'User'}
-                    </Text>
+                  {/* Stats or Graph Section */}
+                  {layoutType === 'graph' && graphData ? (
+                    <ActivityGraph graphData={graphData} />
+                  ) : (
+                    <StatsGrid data={data} statLabels={statLabels} />
+                  )}
 
-                    {/* Items List */}
-                    <ItemsList
-                      data={data}
-                      trackerType={trackerType}
-                      bannerTitle={bannerTitle}
-                      layoutType={layoutType}
-                      graphData={graphData}
-                    />
-
-                    {/* Stats or Graph Section */}
-                    {layoutType === 'graph' && graphData ? (
-                      <ActivityGraph graphData={graphData} />
-                    ) : (
-                      <StatsGrid data={data} statLabels={statLabels} />
-                    )}
-
-                    {/* App Branding Footer */}
-                    <BrandingFooter
-                      trackerType={trackerType}
-                      bannerFooter={bannerFooter}
-                    />
-                  </View>
+                  {/* App Branding Footer */}
+                  <BrandingFooter
+                    trackerType={trackerType}
+                    bannerFooter={bannerFooter}
+                  />
                 </View>
               </View>
             </LinearGradient>
@@ -152,34 +191,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 30,
     elevation: 25,
-    position: 'relative',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
   },
   dynamicHeight: {
     height: BANNER_HEIGHT + 120,
   },
-  additional: {
-    position: 'absolute',
+  topAccent: {
+    height: 3,
     width: '100%',
-    height: '100%',
-    zIndex: 2,
-    borderRadius: 20,
-    overflow: 'hidden',
   },
-  glassBackground: {
+  glowEffect: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
-    borderRadius: 20,
+    top: -50,
+    right: -50,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    opacity: 0.15,
   },
-  glassContent: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+  content: {
     padding: 20,
-    borderRadius: 20,
-    backgroundColor: 'transparent',
+    height: '100%',
   },
   moreInfo: {
     flex: 1,
@@ -190,9 +223,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: 'center',
     marginBottom: 10,
-    textShadowColor: 'rgba(0,0,0,0.7)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
   },
 });
 

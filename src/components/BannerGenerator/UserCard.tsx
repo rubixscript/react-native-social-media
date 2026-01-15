@@ -29,7 +29,7 @@ export const UserCard: React.FC<UserCardProps> = ({
         </Text>
       </View>
 
-      <Avatar />
+      <Avatar profile={profile} />
     </View>
   );
 };

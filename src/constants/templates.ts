@@ -1,69 +1,33 @@
 import { BannerTemplate } from '../types';
 
+// Modern Minimal Dark Templates - 3 unique aesthetic styles
 export const DEFAULT_BANNER_TEMPLATES: BannerTemplate[] = [
+  // 1. Midnight - Pure black with subtle purple accent glow
   {
-    id: 'midnight_aurora',
-    name: 'Aurora',
-    colors: ['#0F2027', '#203A43', '#2C5364'],
-    accentColors: ['#00d4ff', '#ffffff', '#7b68ee'],
-    overlayColor: 'rgba(0,212,255,0.1)',
-    style: 'aurora'
+    id: 'midnight',
+    name: 'Midnight',
+    colors: ['#050505', '#0f0f1a'],
+    accentColors: ['#a855f7', '#c084fc', '#ffffff'],
+    overlayColor: 'rgba(168, 85, 247, 0.08)',
+    style: 'midnight'
   },
+  // 2. Obsidian - Deep blue-black with cyan accent
   {
-    id: 'sunset_vibes',
-    name: 'Sunset',
-    colors: ['#FF6B35', '#F7931E', '#FFE066'],
-    accentColors: ['#ffffff', '#fff8dc', '#ffe4b5'],
-    overlayColor: 'rgba(255,255,255,0.15)',
-    style: 'sunset'
+    id: 'obsidian',
+    name: 'Obsidian',
+    colors: ['#0a0f1a', '#152238', '#1e3a5f'],
+    accentColors: ['#22d3ee', '#67e8f9', '#ffffff'],
+    overlayColor: 'rgba(34, 211, 238, 0.1)',
+    style: 'obsidian'
   },
+  // 3. Carbon - Dark charcoal with emerald accent
   {
-    id: 'dreamy_pink',
-    name: 'Dreamy',
-    colors: ['#667eea', '#764ba2', '#f093fb'],
-    accentColors: ['#ffffff', '#f8f8ff', '#e6e6fa'],
-    overlayColor: 'rgba(255,255,255,0.12)',
-    style: 'dreamy'
-  },
-  {
-    id: 'forest_mystique',
-    name: 'Mystique',
-    colors: ['#134E5E', '#71B280', '#A8E6CF'],
-    accentColors: ['#ffffff', '#f0fff0', '#e0ffe0'],
-    overlayColor: 'rgba(255,255,255,0.15)',
-    style: 'mystique'
-  },
-  {
-    id: 'royal_purple',
-    name: 'Royal',
-    colors: ['#2D1B69', '#11998e', '#38ef7d'],
-    accentColors: ['#ffffff', '#f5f5f5', '#e6e6fa'],
-    overlayColor: 'rgba(255,255,255,0.12)',
-    style: 'royal'
-  },
-  {
-    id: 'cosmic_nebula',
-    name: 'Nebula',
-    colors: ['#0c0c0c', '#301934', '#c31432'],
-    accentColors: ['#ffffff', '#ffb6c1', '#ffc0cb'],
-    overlayColor: 'rgba(255,182,193,0.1)',
-    style: 'nebula'
-  },
-  {
-    id: 'golden_luxury',
-    name: 'Luxury',
-    colors: ['#D4AF37', '#FFD700', '#FFA500'],
-    accentColors: ['#000000', '#2f2f2f', '#4a4a4a'],
-    overlayColor: 'rgba(0,0,0,0.1)',
-    style: 'luxury'
-  },
-  {
-    id: 'ocean_depths',
-    name: 'Ocean',
-    colors: ['#1e3c72', '#2a5298', '#00d4ff'],
-    accentColors: ['#ffffff', '#f0f8ff', '#e6f3ff'],
-    overlayColor: 'rgba(255,255,255,0.15)',
-    style: 'ocean'
+    id: 'carbon',
+    name: 'Carbon',
+    colors: ['#0f1419', '#1a1f2e', '#252d3a'],
+    accentColors: ['#10b981', '#34d399', '#ffffff'],
+    overlayColor: 'rgba(16, 185, 129, 0.08)',
+    style: 'carbon'
   },
 ];
 

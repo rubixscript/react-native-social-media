@@ -1,7 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { ShareButtons } from '../src';
 import { SocialShareModal } from '../src';
 import type { ProgressItem, ProgressSession } from '../src/types';
 
@@ -81,16 +80,40 @@ const customTextLabels = {
 
 export default function App() {
   const [modalVisible, setModalVisible] = React.useState(false);
-  const content = 'Check out this post!';
+  const [gender, setGender] = React.useState<'guy' | 'girl'>('guy');
+
+  // Update profile with gender selection
+  const profile = {
+    ...sampleProfile,
+    gender,
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Social Media Lib</Text>
+      <Text style={styles.title}>Progress Banner Demo</Text>
 
-      <ShareButtons content={content} />
+      {/* Gender Selection */}
+      <View style={styles.genderContainer}>
+        <TouchableOpacity
+          style={[styles.genderButton, gender === 'guy' && styles.genderButtonActive]}
+          onPress={() => setGender('guy')}
+        >
+          <Text style={[styles.genderButtonText, gender === 'guy' && styles.genderButtonTextActive]}>
+            👨 Guy
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.genderButton, gender === 'girl' && styles.genderButtonActive]}
+          onPress={() => setGender('girl')}
+        >
+          <Text style={[styles.genderButtonText, gender === 'girl' && styles.genderButtonTextActive]}>
+            👩 Girl
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Open Modal</Text>
+        <Text style={styles.buttonText}>Open Banner Modal</Text>
       </TouchableOpacity>
 
       <SocialShareModal
@@ -98,7 +121,7 @@ export default function App() {
         onClose={() => setModalVisible(false)}
         items={sampleItems}
         sessions={sampleSessions}
-        profile={sampleProfile}
+        profile={profile}
         trackerType="fitness"
         bannerTitle="My Fitness Progress"
         bannerFooter="Keep pushing! 💪"
@@ -123,6 +146,31 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 30,
+  },
+  genderContainer: {
+    flexDirection: 'row',
+    gap: 15,
+    marginBottom: 20,
+  },
+  genderButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 2,
+    borderColor: '#f0f0f0',
+  },
+  genderButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+  },
+  genderButtonText: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
+  },
+  genderButtonTextActive: {
+    color: '#fff',
   },
   button: {
     backgroundColor: '#007AFF',

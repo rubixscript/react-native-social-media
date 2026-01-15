@@ -258,14 +258,6 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
         <ModalHeader title={labels.headerTitle} darkMode={darkMode} onClose={onClose} />
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <TemplateSelector
-            templates={DEFAULT_BANNER_TEMPLATES}
-            selectedTemplate={selectedTemplate}
-            onSelectTemplate={setSelectedTemplate}
-            title={labels.templateSectionTitle}
-            darkMode={darkMode}
-          />
-
           <BannerPreview
             title={labels.previewSectionTitle}
             darkMode={darkMode}
@@ -281,6 +273,14 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
             bannerTitle={bannerTitle}
             bannerFooter={bannerFooter}
             statLabels={textLabels}
+          />
+
+          <TemplateSelector
+            templates={DEFAULT_BANNER_TEMPLATES}
+            selectedTemplate={selectedTemplate}
+            onSelectTemplate={setSelectedTemplate}
+            title={labels.templateSectionTitle}
+            darkMode={darkMode}
           />
 
           <StatsSummary
