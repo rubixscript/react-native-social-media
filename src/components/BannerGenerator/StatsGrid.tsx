@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { ProgressStats, ReadingStats } from '../../types';
+import { ProgressStats, ReadingStats, SocialShareModalLabels } from '../../types';
 
 interface StatsGridProps {
   data: ProgressStats | ReadingStats;
+  statLabels?: SocialShareModalLabels;
 }
 
-export const StatsGrid: React.FC<StatsGridProps> = ({ data }) => {
+export const StatsGrid: React.FC<StatsGridProps> = ({ data, statLabels }) => {
   const progressLabel = 'progressLabel' in data ? (data as any).progressLabel : 'Progress';
   const itemLabel = 'itemLabel' in data ? (data as any).itemLabel : 'Items';
   const progressValue = 'progressThisMonth' in data
@@ -26,30 +27,47 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ data }) => {
     ? (data as any).readingStreak
     : 0;
 
+  // Custom labels with defaults
+  const stat1Label = statLabels?.bannerStat1Label || progressLabel;
+  const stat1Icon = statLabels?.bannerStat1Icon || 'bar-chart';
+  const stat1Value = statLabels?.bannerStat1Value || String(progressValue);
+
+  const stat2Label = statLabels?.bannerStat2Label || '% Goal';
+  const stat2Icon = statLabels?.bannerStat2Icon || 'crosshairs';
+  const stat2Value = statLabels?.bannerStat2Value || `${data.goalPercentage}%`;
+
+  const stat3Label = statLabels?.bannerStat3Label || itemLabel;
+  const stat3Icon = statLabels?.bannerStat3Icon || 'check-circle';
+  const stat3Value = statLabels?.bannerStat3Value || String(itemsCompleted);
+
+  const stat4Label = statLabels?.bannerStat4Label || 'Streak';
+  const stat4Icon = statLabels?.bannerStat4Icon || 'fire';
+  const stat4Value = statLabels?.bannerStat4Value || String(streak);
+
   return (
     <View style={styles.stats}>
       <View style={styles.statItem}>
-        <Text style={styles.statTitle}>{progressLabel}</Text>
-        <FontAwesome name="bar-chart" size={16} color="#FF9800" />
-        <Text style={styles.statValue}>{progressValue}</Text>
+        <Text style={styles.statTitle}>{stat1Label}</Text>
+        <FontAwesome name={stat1Icon as any} size={16} color="#FF9800" />
+        <Text style={styles.statValue}>{stat1Value}</Text>
       </View>
 
       <View style={styles.statItem}>
-        <Text style={styles.statTitle}>% Goal</Text>
-        <FontAwesome name="crosshairs" size={16} color="#4CAF50" />
-        <Text style={styles.statValue}>{data.goalPercentage}%</Text>
+        <Text style={styles.statTitle}>{stat2Label}</Text>
+        <FontAwesome name={stat2Icon as any} size={16} color="#4CAF50" />
+        <Text style={styles.statValue}>{stat2Value}</Text>
       </View>
 
       <View style={styles.statItem}>
-        <Text style={styles.statTitle}>{itemLabel}</Text>
-        <FontAwesome name="check-circle" size={16} color="#2196F3" />
-        <Text style={styles.statValue}>{itemsCompleted}</Text>
+        <Text style={styles.statTitle}>{stat3Label}</Text>
+        <FontAwesome name={stat3Icon as any} size={16} color="#2196F3" />
+        <Text style={styles.statValue}>{stat3Value}</Text>
       </View>
 
       <View style={styles.statItem}>
-        <Text style={styles.statTitle}>Streak</Text>
-        <FontAwesome name="fire" size={16} color="#F44336" />
-        <Text style={styles.statValue}>{streak}</Text>
+        <Text style={styles.statTitle}>{stat4Label}</Text>
+        <FontAwesome name={stat4Icon as any} size={16} color="#F44336" />
+        <Text style={styles.statValue}>{stat4Value}</Text>
       </View>
     </View>
   );

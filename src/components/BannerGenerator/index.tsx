@@ -2,8 +2,8 @@ import React, { useRef, useState, useImperativeHandle, forwardRef } from 'react'
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import ViewShot from 'react-native-view-shot';
-import { BannerGeneratorProps, BannerTemplate } from '../../types';
+import ViewShot, { captureRef } from 'react-native-view-shot';
+import { BannerGeneratorProps, BannerTemplate, SocialShareModalLabels } from '../../types';
 import { DEFAULT_BANNER_TEMPLATES } from '../../constants/templates';
 import { UserCard } from './UserCard';
 import { ItemsList } from './ItemsList';
@@ -31,17 +31,18 @@ const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(
       trackerType = 'reading',
       bannerTitle,
       bannerFooter,
+      statLabels,
     },
     ref
   ) => {
-    const viewShotRef = useRef<ViewShot>(null);
+    const viewShotRef = useRef<any>(null);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const generateBanner = async (): Promise<string | null> => {
       try {
         setIsGenerating(true);
 
-        // Wait for component to fully render with new props
+        // Wait for component to fully render
         await new Promise((resolve) => setTimeout(resolve, 100));
 
         const uri = await viewShotRef.current?.capture?.();
@@ -112,7 +113,7 @@ const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(
                     {layoutType === 'graph' && graphData ? (
                       <ActivityGraph graphData={graphData} />
                     ) : (
-                      <StatsGrid data={data} />
+                      <StatsGrid data={data} statLabels={statLabels} />
                     )}
 
                     {/* App Branding Footer */}

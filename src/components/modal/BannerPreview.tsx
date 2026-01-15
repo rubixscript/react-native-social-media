@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import BannerGenerator, { BannerGeneratorRef } from '../BannerGenerator';
-import { BannerTemplate, GraphData, ProgressStats, UserProfile, TrackerType } from '../../types';
+import { BannerTemplate, GraphData, ProgressStats, UserProfile, TrackerType, SocialShareModalLabels } from '../../types';
 
 export type LayoutType = 'stats' | 'graph';
 
@@ -20,6 +20,7 @@ interface BannerPreviewProps {
   trackerType: TrackerType;
   bannerTitle?: string;
   bannerFooter?: string;
+  statLabels?: SocialShareModalLabels;
 }
 
 export const BannerPreview: React.FC<BannerPreviewProps> = ({
@@ -36,6 +37,7 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
   trackerType,
   bannerTitle,
   bannerFooter,
+  statLabels,
 }) => {
   return (
     <View style={styles.previewSection}>
@@ -108,6 +110,7 @@ export const BannerPreview: React.FC<BannerPreviewProps> = ({
         trackerType={trackerType}
         bannerTitle={bannerTitle}
         bannerFooter={bannerFooter}
+        statLabels={statLabels}
       />
     </View>
   );

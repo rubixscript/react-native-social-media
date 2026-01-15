@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Modal, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Share as RNShare } from 'react-native';
+import * as Sharing from 'expo-sharing';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SocialBannerModalProps, ShareContent, SocialPlatform } from '../types';
 import { DEFAULT_BANNER_TEMPLATES } from '../constants/templates';
@@ -97,10 +98,10 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
   useEffect(() => {
     if (!visible) {
       // Reset state when modal closes
-      setCurrentShareStep('generate');
       setBannerUri(null);
       setSelectedTemplate(DEFAULT_BANNER_TEMPLATES[0]);
       setLayoutType('stats');
+      setCurrentShareStep('generate');
     }
   }, [visible]);
 
@@ -114,10 +115,39 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
       }
 
       setBannerUri(uri);
-      setCurrentShareStep('share');
+
+      // Share ONLY the banner image using expo-sharing
+      // This is designed specifically for sharing files
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'image/png',
+          dialogTitle: bannerTitle || 'Share Progress Banner',
+        });
+
+        // Track the share
+        analytics.trackShare({
+          platform: 'native',
+          contentType: `${trackerType}_progress`,
+          timestamp: new Date(),
+          success: true,
+          errorMessage: '',
+        });
+
+        onShareComplete?.('native', true);
+      } else {
+        throw new Error('Sharing is not available on this device');
+      }
     } catch (error) {
       console.error('Error generating banner:', error);
-      Alert.alert('Error', 'Failed to generate banner. Please try again.');
+
+      // User cancelled is not an error
+      if ((error as any)?.message?.includes('User did not share') || (error as any)?.message?.includes('Cancelled')) {
+        setIsGenerating(false);
+        return;
+      }
+
+      Alert.alert('Error', labels.shareErrorMessage);
+      onShareComplete?.('native', false);
     } finally {
       setIsGenerating(false);
     }
@@ -228,43 +258,30 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
         <ModalHeader title={labels.headerTitle} darkMode={darkMode} onClose={onClose} />
 
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {currentShareStep === 'generate' && (
-            <>
-              <TemplateSelector
-                templates={DEFAULT_BANNER_TEMPLATES}
-                selectedTemplate={selectedTemplate}
-                onSelectTemplate={setSelectedTemplate}
-                title={labels.templateSectionTitle}
-                darkMode={darkMode}
-              />
+          <TemplateSelector
+            templates={DEFAULT_BANNER_TEMPLATES}
+            selectedTemplate={selectedTemplate}
+            onSelectTemplate={setSelectedTemplate}
+            title={labels.templateSectionTitle}
+            darkMode={darkMode}
+          />
 
-              <BannerPreview
-                title={labels.previewSectionTitle}
-                darkMode={darkMode}
-                layoutType={layoutType}
-                onLayoutChange={setLayoutType}
-                stats={stats}
-                profile={profile}
-                template={selectedTemplate}
-                graphData={graphData}
-                bannerGeneratorRef={bannerGeneratorRef}
-                onBannerGenerated={handleBannerGenerated}
-                trackerType={trackerType}
-                bannerTitle={bannerTitle}
-                bannerFooter={bannerFooter}
-              />
-            </>
-          )}
-
-          {currentShareStep === 'share' && (
-            <ShareStep
-              title={labels.shareSectionTitle}
-              description={labels.shareDescription}
-              darkMode={darkMode}
-              shareContent={shareContent}
-              onShare={handleShare}
-            />
-          )}
+          <BannerPreview
+            title={labels.previewSectionTitle}
+            darkMode={darkMode}
+            layoutType={layoutType}
+            onLayoutChange={setLayoutType}
+            stats={stats}
+            profile={profile}
+            template={selectedTemplate}
+            graphData={graphData}
+            bannerGeneratorRef={bannerGeneratorRef}
+            onBannerGenerated={handleBannerGenerated}
+            trackerType={trackerType}
+            bannerTitle={bannerTitle}
+            bannerFooter={bannerFooter}
+            statLabels={textLabels}
+          />
 
           <StatsSummary
             title={labels.statsSectionTitle}
@@ -274,12 +291,12 @@ const SocialShareModal: React.FC<SocialBannerModalProps> = ({
         </ScrollView>
 
         <ModalActions
-          step={currentShareStep}
+          step="generate"
           isGenerating={isGenerating}
           selectedTemplate={selectedTemplate}
           darkMode={darkMode}
           onGenerate={handleGenerateBanner}
-          onBack={() => setCurrentShareStep('generate')}
+          onBack={() => {}}
           generateText={labels.generateBannerText}
           generatingText={labels.generatingText}
           backText={labels.backToTemplatesText}

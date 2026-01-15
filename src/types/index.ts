@@ -30,9 +30,24 @@ export interface SocialShareModalLabels {
   shareSuccessMessage?: string;
   shareErrorMessage?: string;
 
-  // Stats labels
+  // Stats labels (for ProgressStats calculation)
   progressLabel?: string;
   itemLabel?: string;
+
+  // Banner stats labels - fully customizable stats grid labels
+  // These control the 4 stat items shown in the banner
+  bannerStat1Label?: string;    // Default: "Progress" (e.g., "Pages", "Minutes", "Reps")
+  bannerStat1Icon?: string;     // Default: "bar-chart" (FontAwesome icon name)
+  bannerStat1Value?: string;    // Custom value override (e.g., "150" or use progressThisMonth)
+  bannerStat2Label?: string;    // Default: "% Goal"
+  bannerStat2Icon?: string;     // Default: "crosshairs"
+  bannerStat2Value?: string;    // Custom value override (e.g., "75%")
+  bannerStat3Label?: string;    // Default: "Books" / "Tasks" / "Habits" etc.
+  bannerStat3Icon?: string;     // Default: "check-circle"
+  bannerStat3Value?: string;    // Custom value override (e.g., "5")
+  bannerStat4Label?: string;    // Default: "Streak"
+  bannerStat4Icon?: string;     // Default: "fire"
+  bannerStat4Value?: string;    // Custom value override (e.g., "30")
 }
 
 // ============================================
@@ -197,6 +212,7 @@ export interface BannerGeneratorProps {
   onBannerGenerated?: (imageUri: string) => void;
   bannerTitle?: string;
   bannerFooter?: string;
+  statLabels?: SocialShareModalLabels; // Custom stats labels for the banner
 }
 
 export type SocialPlatform =

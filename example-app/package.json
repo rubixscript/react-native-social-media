@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
+    "@react-native/virtualized-lists": "^0.83.1",
     "expo": "~54.0.31",
     "expo-asset": "^12.0.12",
     "expo-blur": "^15.0.8",

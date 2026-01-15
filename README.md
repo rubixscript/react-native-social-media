@@ -15,9 +15,21 @@ A comprehensive React Native library for creating and sharing beautiful social m
 - 🌙 **Dark Mode Support** - Full theming support for light and dark modes
 - 📈 **Analytics Integration** - Built-in sharing analytics and tracking
 - 🔧 **Fully Customizable** - Custom branding, colors, labels, and content
+- 🚀 **Direct Native Share** - Generate banner and share directly to any app
 - 📱 **React Native & Expo Compatible** - Works with both Expo and bare React Native projects
 - 🎮 **Gamification Ready** - Levels, points, streaks, and achievements
 - 📝 **TypeScript Support** - Full type definitions included
+
+## 🎉 What's New
+
+### v2.2.0 - Direct Share & Custom Stats
+
+- ✨ **Fully Customizable Banner Stats** - All 4 stat items (label, icon, value) are now customizable via `textLabels` prop
+- 🚀 **Direct Native Share** - Banner now shares directly to phone's native share sheet (no extra screen)
+- 🖼️ **Image-Only Sharing** - Uses `expo-sharing` to share the banner image file directly
+- 📝 **Enhanced Documentation** - Complete guide on customizing stats labels
+
+**Breaking Changes:** None - fully backward compatible
 
 ## 📦 Installation
 
@@ -168,6 +180,87 @@ const PomodoroApp = () => {
         bannerTitle="My Productivity Stats"
         bannerFooter="FocusTime App"
         darkMode={true}
+      />
+    </View>
+  );
+};
+```
+
+### Custom Stats Labels Example
+
+Fully customize all 4 stats shown in the banner:
+
+```tsx
+import React, { useState } from 'react';
+import { View, Button } from 'react-native';
+import { SocialShareModal } from '@rubixscript/react-native-progress-banner';
+
+const CustomStatsApp = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const items = [
+    {
+      id: '1',
+      title: 'My Goal',
+      category: 'General',
+      progress: 150,
+      total: 200,
+      color: '#8B5CF6',
+      startDate: new Date('2025-01-01'),
+    },
+  ];
+
+  const sessions = [
+    {
+      id: '1',
+      itemId: '1',
+      value: 25,
+      duration: 25,
+      date: new Date(),
+    },
+  ];
+
+  const profile = {
+    id: 'user1',
+    name: 'Custom User',
+    level: 5,
+    points: 1000,
+  };
+
+  return (
+    <View>
+      <Button
+        title="Share with Custom Stats"
+        onPress={() => setShowModal(true)}
+      />
+
+      <SocialShareModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        trackerType="custom"
+        items={items}
+        sessions={sessions}
+        profile={profile}
+        bannerTitle="My Custom Progress"
+        bannerFooter="MyApp"
+        textLabels={{
+          // Fully customize the 4 banner stats
+          bannerStat1Label: 'Focus Hours',
+          bannerStat1Icon: 'clock-o',
+          bannerStat1Value: '42',
+
+          bannerStat2Label: 'On Track',
+          bannerStat2Icon: 'rocket',
+          bannerStat2Value: '87%',
+
+          bannerStat3Label: 'Sessions Done',
+          bannerStat3Icon: 'check-circle',
+          bannerStat3Value: '156',
+
+          bannerStat4Label: 'Day Streak',
+          bannerStat4Icon: 'fire',
+          bannerStat4Value: '14',
+        }}
       />
     </View>
   );
@@ -884,9 +977,197 @@ interface ReadingSession extends ProgressSession {
 | `darkMode` | `boolean` | ❌ | `false` | Enable dark mode styling |
 | `bannerTitle` | `string` | ❌ | Auto-generated | Custom banner title (e.g., "My Pomodoro Stats") |
 | `bannerFooter` | `string` | ❌ | `'RubixScript'` | Custom footer text (your app name) |
+| `textLabels` | `SocialShareModalLabels` | ❌ | - | **Custom labels for all text including banner stats** |
 | `onShareComplete` | `(platform: string, success: boolean) => void` | ❌ | - | Callback after sharing attempt |
 
 \* Either provide `items` + `sessions` (generic) OR `books` + `readingSessions` (reading-specific)
+
+### Customizing Banner Stats Labels
+
+The `textLabels` prop allows you to fully customize all text in the modal, including the 4 stats shown in the banner grid. **No more hardcoded labels!**
+
+#### Fully Customizable Banner Stats
+
+Each of the 4 stat items in the banner can be customized with:
+- Custom label text
+- Custom FontAwesome icon
+- Custom value (or use calculated values from stats)
+
+```tsx
+<SocialShareModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  trackerType="pomodoro"
+  items={tasks}
+  sessions={sessions}
+  profile={profile}
+  textLabels={{
+    // Customize the 4 stats shown in the banner
+    // Stat 1 (default: "Progress" with bar-chart icon)
+    bannerStat1Label: 'Focus Time',
+    bannerStat1Icon: 'clock-o',
+    bannerStat1Value: '240', // Or leave undefined to use progressThisMonth
+
+    // Stat 2 (default: "% Goal" with crosshairs icon)
+    bannerStat2Label: 'Target',
+    bannerStat2Icon: 'bullseye',
+    bannerStat2Value: '75%', // Or leave undefined to use goalPercentage
+
+    // Stat 3 (default: "Books"/"Tasks" with check-circle icon)
+    bannerStat3Label: 'Completed',
+    bannerStat3Icon: 'check-square',
+    bannerStat3Value: '12', // Or leave undefined to use itemsCompletedThisMonth
+
+    // Stat 4 (default: "Streak" with fire icon)
+    bannerStat4Label: 'Days Active',
+    bannerStat4Icon: 'calendar',
+    bannerStat4Value: '30', // Or leave undefined to use currentStreak
+  }}
+/>
+```
+
+#### All Available Text Label Options
+
+```tsx
+interface SocialShareModalLabels {
+  // Header & Section Titles
+  headerTitle?: string;              // Default: "Share Your [Type] Progress"
+  templateSectionTitle?: string;     // Default: "Choose Template"
+  previewSectionTitle?: string;      // Default: "Preview"
+  shareSectionTitle?: string;        // Default: "Share Your Progress"
+  statsSectionTitle?: string;        // Default: "Your [Type] Stats"
+
+  // Share Section
+  shareDescription?: string;         // Default: "Share your progress with friends..."
+
+  // Buttons
+  generateBannerText?: string;       // Default: "Generate Banner"
+  generatingText?: string;           // Default: "Generating..."
+  backToTemplatesText?: string;      // Default: "Back to Templates"
+
+  // Success Messages
+  copyLinkSuccessMessage?: string;   // Default: "Progress copied to clipboard!"
+  shareSuccessMessage?: string;      // Default: "Your progress has been shared!"
+  shareErrorMessage?: string;        // Default: "Failed to share. Please try again."
+
+  // Stats Labels (for ProgressStats calculation)
+  progressLabel?: string;            // Default: "Progress" (or type-specific)
+  itemLabel?: string;                // Default: "Items" (or type-specific)
+
+  // Banner Stats Labels (fully customizable!)
+  bannerStat1Label?: string;         // Stat 1 label text
+  bannerStat1Icon?: string;          // Stat 1 FontAwesome icon name
+  bannerStat1Value?: string;         // Stat 1 value override
+  bannerStat2Label?: string;         // Stat 2 label text
+  bannerStat2Icon?: string;          // Stat 2 FontAwesome icon name
+  bannerStat2Value?: string;         // Stat 2 value override
+  bannerStat3Label?: string;         // Stat 3 label text
+  bannerStat3Icon?: string;          // Stat 3 FontAwesome icon name
+  bannerStat3Value?: string;         // Stat 3 value override
+  bannerStat4Label?: string;         // Stat 4 label text
+  bannerStat4Icon?: string;          // Stat 4 FontAwesome icon name
+  bannerStat4Value?: string;         // Stat 4 value override
+}
+```
+
+#### Example: Fitness Tracker Custom Stats
+
+```tsx
+<SocialShareModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  trackerType="fitness"
+  items={workouts}
+  sessions={workoutSessions}
+  profile={profile}
+  bannerTitle="My Fitness Journey"
+  bannerFooter="FitPro App"
+  textLabels={{
+    // Banner stats for fitness
+    bannerStat1Label: 'Total Reps',
+    bannerStat1Icon: 'heartbeat',
+    // bannerStat1Value uses progressThisMonth (total reps)
+
+    bannerStat2Label: 'Goal Reached',
+    bannerStat2Icon: 'trophy',
+    // bannerStat2Value uses goalPercentage
+
+    bannerStat3Label: 'Workouts',
+    bannerStat3Icon: 'dumbbell',
+    // bannerStat3Value uses itemsCompletedThisMonth
+
+    bannerStat4Label: 'Active Days',
+    bannerStat4Icon: 'fire',
+    // bannerStat4Value uses currentStreak
+  }}
+/>
+```
+
+#### Example: Habit Tracker Custom Stats
+
+```tsx
+<SocialShareModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  trackerType="habit"
+  items={habits}
+  sessions={habitSessions}
+  profile={profile}
+  textLabels={{
+    bannerStat1Label: 'Days Completed',
+    bannerStat1Icon: 'check-circle-o',
+
+    bannerStat2Label: 'Success Rate',
+    bannerStat2Icon: 'line-chart',
+
+    bannerStat3Label: 'Habits Done',
+    bannerStat3Icon: 'star',
+
+    bannerStat4Label: 'Current Streak',
+    bannerStat4Icon: 'bolt',
+  }}
+/>
+```
+
+#### Example: Custom Values Instead of Calculated
+
+If you want to show completely custom values instead of the calculated ones:
+
+```tsx
+<SocialShareModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  trackerType="reading"
+  books={books}
+  readingSessions={readingSessions}
+  profile={profile}
+  textLabels={{
+    // Override all values with custom ones
+    bannerStat1Value: '1,250',  // Custom pages instead of progressThisMonth
+    bannerStat2Value: '85%',    // Custom percentage
+    bannerStat3Value: '7',      // Custom books count
+    bannerStat4Value: '45',     // Custom streak days
+  }}
+/>
+```
+
+### Customizing Footer Branding (RubixScript)
+
+The banner footer shows your app name. Customize it with the `bannerFooter` prop:
+
+```tsx
+<SocialShareModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  trackerType="pomodoro"
+  items={items}
+  sessions={sessions}
+  profile={profile}
+  bannerFooter="My Awesome App"  // Your app name instead of "RubixScript"
+/>
+```
+
+**Default**: If not specified, the footer shows "RubixScript".
 
 ### BannerGenerator Props
 
