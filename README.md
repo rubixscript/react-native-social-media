@@ -8,7 +8,7 @@ A comprehensive React Native library for creating and sharing beautiful social m
 ## ✨ Features
 
 - 🎯 **Universal Progress Tracking** - Works with reading apps, pomodoro timers, habit trackers, skill trackers, fitness apps, and custom trackers
-- 🎨 **Beautiful Banner Generation** - 8 professionally designed templates with gradient backgrounds
+- 🎨 **Beautiful Banner Generation** - 3 modern dark minimal templates with unique accent colors
 - 📊 **Rich Statistics Display** - Progress stats, activity graphs, streaks, and achievements
 - 📱 **Two Layout Modes** - Stats grid view or 30-day activity heatmap
 - 🔄 **Multi-Platform Sharing** - Facebook, Instagram, Twitter, LinkedIn, WhatsApp, Telegram, and more
@@ -22,14 +22,21 @@ A comprehensive React Native library for creating and sharing beautiful social m
 
 ## 🎉 What's New
 
+### v2.3.0 - Dark Minimal Templates & Improved Avatars
+
+- 🌙 **3 Dark Minimal Templates** - New modern dark-themed templates: Midnight, Obsidian, and Carbon
+- 👤 **Improved Avatar System** - Procedural avatars with guy/girl options, now with simpler and cleaner design
+- 🎨 **Template-Specific Styling** - Each dark template has unique accent colors and visual elements
+- 🐛 **Bug Fixes** - Fixed name text color for midnight template to display as white
+
+**Breaking Changes:** None - fully backward compatible
+
 ### v2.2.0 - Direct Share & Custom Stats
 
 - ✨ **Fully Customizable Banner Stats** - All 4 stat items (label, icon, value) are now customizable via `textLabels` prop
 - 🚀 **Direct Native Share** - Banner now shares directly to phone's native share sheet (no extra screen)
 - 🖼️ **Image-Only Sharing** - Uses `expo-sharing` to share the banner image file directly
 - 📝 **Enhanced Documentation** - Complete guide on customizing stats labels
-
-**Breaking Changes:** None - fully backward compatible
 
 ## 📦 Installation
 
@@ -1221,16 +1228,11 @@ interface ShareContent {
 
 ## 🎨 Built-in Templates
 
-The library includes 8 professionally designed templates:
+The library includes 3 modern dark minimal templates, each with unique accent colors and visual elements:
 
-1. **midnight_aurora** - Cool blues with cyan accents
-2. **sunset_vibes** - Warm oranges and yellows
-3. **dreamy_pink** - Purple to pink gradients
-4. **forest_mystique** - Green gradient
-5. **royal_purple** - Deep purple to green
-6. **cosmic_nebula** - Dark with red accents
-7. **golden_luxury** - Gold gradient with dark text
-8. **ocean_depths** - Blue gradient
+1. **Midnight** - Pure black with subtle purple accent glow and white name text
+2. **Obsidian** - Deep blue-black with cyan top accent bar
+3. **Carbon** - Dark charcoal with emerald green glow effect
 
 ## 🛠️ Utility Functions
 

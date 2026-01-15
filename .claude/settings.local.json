@@ -8,7 +8,8 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: v2.2.0 - Direct native share and fully customizable banner stats\n\n- Add fully customizable banner stats \\(labels, icons, values\\) via textLabels prop\n- Implement direct native share using expo-sharing \\(no intermediate screen\\)\n- Share banner image file directly \\(not text\\)\n- Add comprehensive documentation for custom stats\n- Enhanced bannerStat1-4 properties in SocialShareModalLabels\n- Updated README with new features and changelog\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: v2.2.0 - Direct native share and fully customizable banner stats\n\n- Add fully customizable banner stats \\(labels, icons, values\\) via textLabels prop\n- Implement direct native share using expo-sharing \\(no intermediate screen\\)\n- Share banner image file directly \\(not text\\)\n- Add comprehensive documentation for custom stats\n- Enhanced bannerStat1-4 properties in SocialShareModalLabels\n- Updated README with new features and changelog\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npm run lint)"
     ],
     "deny": [],
     "ask": []
