@@ -136,7 +136,10 @@ const BannerGenerator = forwardRef<BannerGeneratorRef, BannerGeneratorProps>(
 
                 {/* User Info Section */}
                 <View style={styles.moreInfo}>
-                  <Text style={[styles.userName, { color: templateStyle.accentColor }]}>
+                  <Text style={[
+                    styles.userName,
+                    { color: template.style === 'midnight' ? '#ffffff' : templateStyle.accentColor }
+                  ]}>
                     {profile?.name || profile?.title || 'User'}
                   </Text>
 
