@@ -23,15 +23,8 @@ export const Avatar: React.FC<AvatarProps> = ({ profile }) => {
     <View style={styles.avatarContainer}>
       <View style={styles.avatarBackground}>
         <View style={styles.headContainer}>
-          {/* Hair - different styles for guy/girl */}
-          {gender === 'girl' ? (
-            <>
-              <View style={[styles.hair, styles.girlHair, { backgroundColor: '#4a3728' }]} />
-              <View style={[styles.hairSide, { backgroundColor: '#4a3728' }]} />
-            </>
-          ) : (
-            <View style={[styles.hair, { backgroundColor: '#2f1b0d' }]} />
-          )}
+          {/* Hair - same style for both, just different color */}
+          <View style={[styles.hair, { backgroundColor: gender === 'girl' ? '#4a3728' : '#2f1b0d' }]} />
 
           {/* Face */}
           <View style={[styles.face, { backgroundColor: '#eab38f' }]}>
@@ -51,17 +44,6 @@ export const Avatar: React.FC<AvatarProps> = ({ profile }) => {
           {/* Shirt */}
           <View style={[styles.shirt, { backgroundColor: gender === 'girl' ? '#ff6b9d' : '#8665c2' }]}>
             <View style={styles.collar} />
-            {gender === 'girl' ? (
-              <View style={styles.necklace}>
-                <View style={[styles.pendant, { backgroundColor: '#ffd700' }]} />
-              </View>
-            ) : (
-              <View style={styles.buttons}>
-                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
-                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
-                <View style={[styles.button, { backgroundColor: '#5a487b' }]} />
-              </View>
-            )}
           </View>
         </View>
       </View>
@@ -117,20 +99,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
   },
-  girlHair: {
-    height: 55,
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
-  },
-  hairSide: {
-    position: 'absolute',
-    top: 15,
-    width: 12,
-    height: 70,
-    borderTopLeftRadius: 6,
-    borderBottomLeftRadius: 15,
-    left: 10,
-  },
   face: {
     width: 55,
     height: 55,
@@ -184,33 +152,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-  },
-  buttons: {
-    position: 'absolute',
-    top: 12,
-    left: '50%',
-    marginLeft: -2,
-    alignItems: 'center',
-    gap: 4,
-  },
-  button: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-  },
-  necklace: {
-    position: 'absolute',
-    top: 8,
-    left: '50%',
-    marginLeft: -15,
-    width: 30,
-    height: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pendant: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
   },
 });
